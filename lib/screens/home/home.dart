@@ -1,6 +1,7 @@
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:thriftit/components/products.dart';
+import 'package:thriftit/db/auth_util.dart';
 import 'package:thriftit/screens/add_products.dart';
 import 'package:thriftit/screens/cart.dart';
 
@@ -10,6 +11,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  final AuthService _auth = AuthService();
+
   @override
   Widget build(BuildContext context) {
     Widget imageCarousel = new Container(
@@ -55,19 +59,18 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.red[300],
               ),
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>Cart()));
-              }
-              ),
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Cart()));
+              }),
         ],
       ),
       drawer: Drawer(
-
         child: new ListView(
           children: <Widget>[
 //            header
             new UserAccountsDrawerHeader(
-              accountName: Text('Nour el houda'),
-              accountEmail: Text('nour@gmail.com'),
+              accountName: Text(""),
+              accountEmail: Text(""),
               currentAccountPicture: GestureDetector(
                 child: new CircleAvatar(
                   backgroundColor: Colors.grey,
@@ -86,7 +89,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () {},
               child: ListTile(
                 title: Text('Home Page'),
-                leading: Icon(Icons.home),
+                leading: Icon(Icons.home, color: Colors.red[300]),
               ),
             ),
 
@@ -94,7 +97,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () {},
               child: ListTile(
                 title: Text('My account'),
-                leading: Icon(Icons.person),
+                leading: Icon(Icons.person, color: Colors.red[300]),
               ),
             ),
 
@@ -105,7 +108,7 @@ class _HomePageState extends State<HomePage> {
               },
               child: ListTile(
                 title: Text('Sell something !'),
-                leading: Icon(Icons.add_a_photo),
+                leading: Icon(Icons.add_a_photo, color: Colors.red[300]),
               ),
             ),
 
@@ -116,7 +119,7 @@ class _HomePageState extends State<HomePage> {
               },
               child: ListTile(
                 title: Text('Cart'),
-                leading: Icon(Icons.shopping_basket),
+                leading: Icon(Icons.shopping_basket, color: Colors.red[300]),
               ),
             ),
 
@@ -124,7 +127,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () {},
               child: ListTile(
                 title: Text('Favourites'),
-                leading: Icon(Icons.favorite),
+                leading: Icon(Icons.favorite, color: Colors.red[300]),
               ),
             ),
 
@@ -146,6 +149,15 @@ class _HomePageState extends State<HomePage> {
               child: ListTile(
                 title: Text('About'),
                 leading: Icon(Icons.help, color: Colors.green),
+              ),
+            ),
+            InkWell(
+              onTap: () async{
+                await _auth.signOut();
+              },
+              child: ListTile(
+                title: Text('Logout'),
+                leading: Icon(Icons.exit_to_app, color: Colors.amber),
               ),
             ),
           ],
