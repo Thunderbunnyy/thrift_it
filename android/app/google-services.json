@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "801103856630",
+    "firebase_url": "https://thrift-it-466e7.firebaseio.com",
+    "project_id": "thrift-it-466e7",
+    "storage_bucket": "thrift-it-466e7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:801103856630:android:9dd0714098f734332b7dd7",
+        "android_client_info": {
+          "package_name": "com.nour.thriftit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "801103856630-cvdb05vlp7ui7kitdpqa8frqkcde36ah.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nour.thriftit",
+            "certificate_hash": "ddf41f7d832b51a2e6f0a742a0a6ba692da33957"
+          }
+        },
+        {
+          "client_id": "801103856630-ffgh69n3lohnncb22bg460jbe48om5du.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVvICzKSL7hDiHH28chCIQ8ltXvc26uao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "801103856630-ffgh69n3lohnncb22bg460jbe48om5du.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
