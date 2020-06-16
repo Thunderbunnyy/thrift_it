@@ -1,17 +1,11 @@
-
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:thriftit/db/database.dart';
-import 'package:thriftit/models/user.dart';
 
+/*
 class AuthService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseStorage _storage = FirebaseStorage.instance;
+  //FirebaseStorage _storage = FirebaseStorage.instance;
 
   // create user obj based on firebase user
   User _userFromFirebaseUser(FirebaseUser user) {
@@ -25,17 +19,6 @@ class AuthService {
         .map(_userFromFirebaseUser);
   }
 
-  // sign in anon
-  Future signInAnon() async {
-    try {
-      AuthResult result = await _auth.signInAnonymously();
-      FirebaseUser user = result.user;
-      return _userFromFirebaseUser(user);
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
 
   // sign in with email and password
   Future signInWithEmailAndPassword(String email, String password) async {
@@ -54,10 +37,10 @@ class AuthService {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
-
+/*
       //create a new doc for the user with the uid
       await DatabaseService(uid: user.uid).updateUserData('Nour','');
-      return _userFromFirebaseUser(user);
+      return _userFromFirebaseUser(user);*/
 
     } catch (error) {
       print(error.toString());
@@ -75,4 +58,4 @@ class AuthService {
     }
   }
 
-}
+}*/

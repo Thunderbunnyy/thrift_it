@@ -1,16 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:thriftit/models/product.dart';
-import 'package:thriftit/models/user.dart';
+import 'package:thriftit/db/product.dart';
 
 class DatabaseService {
 
-  final String uid;
+  //final String uid;
 
-  DatabaseService({this.uid});
+  //DatabaseService({this.uid});
 
   //collection reference
-  final CollectionReference users = Firestore.instance.collection('users');
-
+  //final CollectionReference users = Firestore.instance.collection('users');
+/*
   Future updateUserData(String name, String photoUrl) async{
 
     return await users.document(uid).setData({
@@ -18,12 +17,12 @@ class DatabaseService {
       'photoUrl' : '',
     });
 
-  }
+  }*/
 
-  final CollectionReference product = Firestore.instance.collection('products');
+  final CollectionReference product = Firestore.instance.collection('Products');
 
   //product list from snapshot
-  List<Product> _productListFromSnapshot(QuerySnapshot snapshot){
+  List<Product> productListFromSnapshot(QuerySnapshot snapshot){
     return snapshot.documents.map((doc) {
     return Product(
       brand: doc.data['brand'] ?? '',
@@ -39,6 +38,7 @@ class DatabaseService {
     }).toList();
   }
 
+  /*
   //user data from snapshot
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot){
     return UserData(
@@ -47,19 +47,22 @@ class DatabaseService {
       photoUrl : snapshot.data['photoUrl'],
 
     );
-  }
+  }*/
 
+/*
   //get products stream
   Stream<List<Product>> get products {
       return product.snapshots()
       .map(_productListFromSnapshot);
-}
+}*/
 
+/*
   //get user doc stream
   Stream<UserData> get userData {
     return users.document(uid).snapshots()
         .map(_userDataFromSnapshot);
-  }
+  }*/
 
 
 }
+

@@ -1,5 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:thriftit/db/auth_util.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:thriftit/screens/home.dart';
 import 'package:thriftit/screens/signup.dart';
 
 class Login extends StatefulWidget {
@@ -10,13 +16,78 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
 
-  final AuthService _auth = AuthService();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
+
+  final GoogleSignIn googleSignIn = new GoogleSignIn();
+  final FacebookLogin fbLogin = new FacebookLogin();
+  SharedPreferences sharedPreferences;
+  bool isLogged= false;
 
   //txt field state
   String email = "";
   String password = '';
   String error ='';
+
+
+  @override
+  void initState() {
+    super.initState();
+    //isSignedIn();
+  }
+/*
+  void isSignedIn() async{
+     sharedPreferences = await  SharedPreferences.getInstance();
+
+     if(sharedPreferences!=null){
+       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+     }
+  }*/
+
+  Future handleSignIn() async{
+
+    sharedPreferences = await  SharedPreferences.getInstance();
+    GoogleSignInAccount googleUser = await googleSignIn.signIn();
+    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    final FirebaseUser user = (await _firebaseAuth.signInWithCredential(credential)).user;
+
+    if(user!=null){
+      final QuerySnapshot result = await Firestore.instance.collection('users').where("id",isEqualTo: user.uid).getDocuments();
+      final List<DocumentSnapshot> docs = result.documents;
+      if(docs.length == 0){
+        //add user to collection
+        Firestore.instance.collection('users').document(user.uid).setData({
+          "id" : user.uid,
+          "username" : user.displayName,
+          "profilePicture" : user.photoUrl
+        });
+        await sharedPreferences.setString("id", user.uid);
+        await sharedPreferences.setString("username", user.displayName);
+        await sharedPreferences.setString("profilePicture", user.photoUrl);
+
+      }else{
+        await sharedPreferences.setString("id", docs[0]['id']);
+        await sharedPreferences.setString("username", docs[0]['username']);
+        await sharedPreferences.setString("profilePicture", docs[0]['profilePicture']);
+      }
+
+      Fluttertoast.showToast(msg: "Logged in");
+
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+
+    }else {
+      Fluttertoast.showToast(msg: "Something went badly wrong :( ");
+    }
+
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -113,18 +184,6 @@ class _LoginState extends State<Login> {
                           color: Colors.red[300],
                           elevation: 7.0,
                           child: GestureDetector(
-                            onTap: () async{
-                              if(_formKey.currentState.validate()){
-                                dynamic result = await _auth.signInWithEmailAndPassword(email,password);
-                                if(result == null) {
-                                  setState(() {
-                                    return error = 'Could not sign in';
-                                  });
-                                }else {
-
-                                }
-                              }
-                            },
                             child: Center(
                               child: Text(
                                 'LOGIN',
@@ -152,16 +211,18 @@ class _LoginState extends State<Login> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Center(
-                                child: ImageIcon(
-                                    AssetImage('assets/facebook.png')),
-                              ),
                               SizedBox(width: 10.0),
-                              Center(
-                                child: Text('Log in with google',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Montserrat')),
+                              InkWell(
+                                onTap: (){
+                                    handleSignIn();
+                                },
+                                child: Center(
+                                  child: Text('Log in with google',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Montserrat')),
+
+                                ),
                               )
                             ],
                           ),
@@ -198,4 +259,6 @@ class _LoginState extends State<Login> {
           ],
         ));
   }
+
+
 }

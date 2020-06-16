@@ -21,7 +21,8 @@ class ProductDetails extends StatefulWidget {
       this.prod_detail_brand,
       this.prod_detail_state,
       this.prod_detail_description,
-      this.prod_detail_name});
+      this.prod_detail_name
+      });
 
   @override
   _ProductDetailsState createState() => _ProductDetailsState();
@@ -32,22 +33,24 @@ class _ProductDetailsState extends State<ProductDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Column(children: <Widget>[
-          Container(
-              height: 300.0,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30.0),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.black12,
-                        offset: Offset(0.0, 2.0),
-                        blurRadius: 6.0)
-                  ]),
-              child: ClipRRect(
+      Container(
+          height: 300.0,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30.0),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black12,
+                    offset: Offset(0.0, 2.0),
+                    blurRadius: 6.0)
+              ]),
+          child: Stack(
+            children: <Widget>[
+              ClipRRect(
                 borderRadius: BorderRadius.circular(30.0),
                 child: Carousel(
                   boxFit: BoxFit.cover,
                   images: [
-                    AssetImage(widget.prod_detail_pic),
+                    Image.network(widget.prod_detail_pic),
                     //AssetImage('assets/images/m1.jpg'),
                     //AssetImage('assets/images/w1.jpg'),
                   ],
@@ -56,14 +59,18 @@ class _ProductDetailsState extends State<ProductDetails> {
                   animationDuration: Duration(milliseconds: 1000),
                   showIndicator: false,
                 ),
-              )),
+              ),
+            ],
 
+          )),
       Expanded(
           child: ListView(
         children: <Widget>[
           Container(
             child: ListTile(
-              leading: CircleAvatar(),
+              leading: CircleAvatar(
+                backgroundImage: NetworkImage(widget.prod_detail_sellerimg),
+              ),
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -79,7 +86,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                   )
                 ],
               ),
-              subtitle: Text('Costume'),
+              subtitle: Text('${widget.prod_detail_name}'),
             ),
           ),
           Padding(
@@ -103,25 +110,13 @@ class _ProductDetailsState extends State<ProductDetails> {
           ),
           ListTile(
             title: Text('Description :'),
-            subtitle: Text('sdfdfhdsgh'),
+            subtitle: Text('${widget.prod_detail_description}'),
           ),
           ListTile(
             title: Text('Comments :'),
           ),
-          Divider(
-            color: Colors.black12,
-          ),
-          ListTile(
-            title: Text('Similar products :'),
-          ),
-            Container(
-              height: 340.0,
-              child: SimilarProducts(),
-            )
         ],
-
       )),
-
       FloatingActionButton.extended(
         onPressed: () {},
         icon: Icon(Icons.shopping_cart),
@@ -131,13 +126,14 @@ class _ProductDetailsState extends State<ProductDetails> {
     ]));
   }
 }
-
+/*
 class SimilarProducts extends StatefulWidget {
   @override
   _SimilarProductsState createState() => _SimilarProductsState();
 }
 
 class _SimilarProductsState extends State<SimilarProducts> {
+
   var product_list = [
 
     {
@@ -236,3 +232,4 @@ class SimilarSingleprod extends StatelessWidget {
     );
   }
 }
+*/

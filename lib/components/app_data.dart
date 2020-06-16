@@ -29,7 +29,16 @@ List<String> localStates = [
   "Kind of used",
 ];
 
-
+//product details
+const String productName= "productName";
+const String productDesc= "productDesc";
+const String productPrice= "productPrice";
+const String productBrand= "productBrand";
+const String productSize= "productSize";
+const String productState= "productState";
+const String productCategory= "productCategory";
+const String userId= "userId";
+const String productImage= "productImage";
 
 
 

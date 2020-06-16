@@ -9,7 +9,7 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
 
-  final AuthService _auth = AuthService();
+  //final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   String error ='';
 
@@ -93,8 +93,9 @@ class _SignupPageState extends State<SignupPage> {
                           color: Colors.red[300],
                           elevation: 7.0,
                           child: GestureDetector(
-                            onTap: () async{
+                            /*onTap: () async{
                               if(_formKey.currentState.validate()){
+
                                   dynamic result = await _auth.registerWithEmailAndPassword(email,password);
                                   if(result == null) {
                                     setState(() {
@@ -102,7 +103,7 @@ class _SignupPageState extends State<SignupPage> {
                                     });
                                   }
                               }
-                            },
+                            },*/
                             child: Center(
                               child: Text(
                                 'SIGNUP',

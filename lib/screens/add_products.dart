@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:thriftit/components/app_data.dart';
 import 'package:thriftit/components/product_tools.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:thriftit/screens/home/home.dart';
+import 'package:thriftit/screens/home.dart';
 
 class AddProduct extends StatefulWidget {
   @override
@@ -15,7 +15,7 @@ class AddProduct extends StatefulWidget {
 }
 
 class _AddProductState extends State<AddProduct> {
-  Stream<QuerySnapshot> stream;
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseUser loggedInUser;
 
@@ -36,6 +36,8 @@ class _AddProductState extends State<AddProduct> {
   TextEditingController productPriceController = new TextEditingController();
   TextEditingController productDescController = new TextEditingController();
   TextEditingController productBrandController = new TextEditingController();
+
+  //Map<int, File> imagesMap = new Map();
 
   final scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -181,9 +183,9 @@ class _AddProductState extends State<AddProduct> {
     );
   }
 
-  void changedDropDownState(String selectedState) {
+  void changedDropDownState(String selectedCategory) {
     setState(() {
-      selectedState = selectedState;
+      selectedState = selectedCategory;
     });
   }
 
@@ -209,6 +211,8 @@ class _AddProductState extends State<AddProduct> {
           .ref()
             .child("$s.jpg");
 
+        storageReference.putFile(imageList[s]);
+
         String url = await storageReference.getDownloadURL();
         imageUrl.add(url);
 
@@ -216,6 +220,7 @@ class _AddProductState extends State<AddProduct> {
     } on PlatformException catch(e){
         print(e.details);
     }
+
     return imageUrl;
   }
 
@@ -244,7 +249,7 @@ class _AddProductState extends State<AddProduct> {
     setState(() {});
   }
 
-  addNewProducts() {
+  addNewProducts() async {
 
     if (imageList == null || imageList.isEmpty) {
       showSnackBar("Product Images cannot be empty", scaffoldKey);
@@ -283,7 +288,7 @@ class _AddProductState extends State<AddProduct> {
     
     try{
       Firestore.instance.collection("Products").document().setData({
-      'productImage' :uploadImages,
+      'productImage' : await uploadImages(),
       'productName' : productNameController.text,
       'productDesc' : productDescController.text,
       'productPrice' : productPriceController.text,
@@ -292,6 +297,7 @@ class _AddProductState extends State<AddProduct> {
       'productState' : selectedState,
       'productCategory': selectedCategory,
       'user' : loggedInUser.uid
+
       });
 
       Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));

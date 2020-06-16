@@ -1,9 +1,12 @@
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:thriftit/components/products.dart';
 import 'package:thriftit/db/auth_util.dart';
 import 'package:thriftit/screens/add_products.dart';
 import 'package:thriftit/screens/cart.dart';
+import 'package:thriftit/screens/login.dart';
+import 'package:thriftit/screens/profile.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,8 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  final AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,9 @@ class _HomePageState extends State<HomePage> {
                 Icons.person,
                 color: Colors.red[300],
               ),
-              onPressed: () {}),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>Profile()));
+              }),
           IconButton(
               icon: Icon(
                 Icons.search,
@@ -77,6 +80,7 @@ class _HomePageState extends State<HomePage> {
                   child: Icon(
                     Icons.person,
                     color: Colors.white,
+
                   ),
                 ),
               ),
@@ -153,7 +157,8 @@ class _HomePageState extends State<HomePage> {
             ),
             InkWell(
               onTap: () async{
-                await _auth.signOut();
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Login()));
               },
               child: ListTile(
                 title: Text('Logout'),
