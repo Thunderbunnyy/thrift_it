@@ -217,7 +217,7 @@ class _LoginState extends State<Login> {
                                     handleSignIn();
                                 },
                                 child: Center(
-                                  child: Text('Log in with google',
+                                  child: Text('Log in with Facebook',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontFamily: 'Montserrat')),

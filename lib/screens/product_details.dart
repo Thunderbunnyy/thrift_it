@@ -1,5 +1,13 @@
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:thriftit/components/constants.dart';
+import 'package:thriftit/db/payment-service.dart';
+import 'package:thriftit/screens/existing_cards.dart';
+import 'package:thriftit/screens/home.dart';
+import 'package:thriftit/screens/modify_product.dart';
 
 class ProductDetails extends StatefulWidget {
   final prod_detail_seller;
@@ -21,14 +29,139 @@ class ProductDetails extends StatefulWidget {
       this.prod_detail_brand,
       this.prod_detail_state,
       this.prod_detail_description,
-      this.prod_detail_name
-      });
+      this.prod_detail_name});
 
   @override
   _ProductDetailsState createState() => _ProductDetailsState();
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseUser loggedInUser;
+
+  Future<DocumentSnapshot> getCurrentUserFromFS(FirebaseUser user) async {
+    final user = await _auth.currentUser();
+    loggedInUser = user;
+
+    try {
+      if (user != null) {
+        print("user id is ${user.uid}");
+        return Firestore.instance.collection('users').document(user.uid).get();
+      } else {
+        print("user is null");
+        return null;
+      }
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    StripeService.init();
+    getCurrentUserFromFS(loggedInUser);
+    String id = "20FhJpuLgBsVCbkM71M2";
+    deletePost(id);
+  }
+
+  void onItemPress(BuildContext context, int index) async{
+    switch(index){
+      case 0:
+        var response = await StripeService.payWithNewCard(
+          amount: '150',
+          currency: 'usd'
+        );
+        try{
+          Firestore.instance.collection("Purchases").document().setData({
+            'productName' : widget.prod_detail_name,
+            'productPrice' : widget.prod_detail_price,
+            'producImage' : widget.prod_detail_pic,
+            'user' : loggedInUser.uid
+          });
+
+        } on PlatformException catch (e){
+          return e.details;
+        }
+        Navigator.of(context, rootNavigator: true).pop(context);
+          Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text(response.message),
+            duration: new Duration(milliseconds: 5000),
+          ));
+
+
+        break;
+      case 1:
+        Navigator.push(context, MaterialPageRoute(builder: (context)=> ExistingCards()));
+        break;
+      case 2:
+        try{
+          Firestore.instance.collection("Purchases").document().setData({
+            'productName' : widget.prod_detail_name,
+            'productPrice' : widget.prod_detail_price,
+            'producImage' : widget.prod_detail_pic,
+            'user' : loggedInUser.uid
+          });
+
+        } on PlatformException catch (e){
+          return e.details;
+        }
+        Navigator.push(context, MaterialPageRoute(builder: (context)=> HomePage()));
+        break;
+    }
+  }
+
+  createAlertDialog(BuildContext context){
+    return showDialog(context: context,builder: (context){
+      return SimpleDialog(
+        title: Text("Choose payment method"),
+        children: <Widget>[
+          Container(
+            height:200,
+            width: 300,
+            child: ListView.separated(
+                itemBuilder: (context,index){
+                  Icon icon;
+                  Text  text;
+                  switch(index){
+                    case 0:
+                      icon =  Icon(Icons.add_circle, color: Colors.red[300]);
+                      text = Text("Payment with new card");
+                      break;
+                    case 1:
+                      icon =  Icon(Icons.credit_card, color: Colors.red[300]);
+                      text = Text("Payment with existing card");
+                      break;
+                    case 2:
+                      icon =  Icon(Icons.local_shipping, color: Colors.red[300]);
+                      text = Text("Payment after delivery");
+                      break;
+                  }
+                  return InkWell(
+                    onTap: (){
+                      onItemPress(context,index);
+                    },
+                    child: ListTile(
+                      title: text,
+                      leading: icon,
+                    ),
+                  );
+                },
+                separatorBuilder: (context,index)=> Divider(
+                  color: Colors.red[300],
+              ),
+                itemCount: 3,
+
+            ),
+          )
+        ],
+      );
+    });
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,8 +193,21 @@ class _ProductDetailsState extends State<ProductDetails> {
                   showIndicator: false,
                 ),
               ),
+              Padding(
+                padding: EdgeInsets.all(20.0),
+                child: PopupMenuButton<String>(
+                  onSelected: choiceAction,
+                  itemBuilder: (BuildContext context) {
+                    return Constants.choices.map((String choice) {
+                      return PopupMenuItem<String>(
+                        value: choice,
+                        child: Text(choice),
+                      );
+                    }).toList();
+                  },
+                ),
+              )
             ],
-
           )),
       Expanded(
           child: ListView(
@@ -118,13 +264,36 @@ class _ProductDetailsState extends State<ProductDetails> {
         ],
       )),
       FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () {
+          createAlertDialog(context);
+        },
         icon: Icon(Icons.shopping_cart),
         label: Text("Buy now"),
         backgroundColor: Colors.red[300],
       ),
     ]));
   }
+
+  void choiceAction(String choice) {
+    if (choice == Constants.Modify) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => ModifyProduct()));
+    } else if (choice == Constants.Delete) {
+      deletePost("20FhJpuLgBsVCbkM71M2");
+    }
+  }
+
+  void deletePost(String id) {
+    Firestore.instance
+        .collection('Products')
+        .document(id)
+        .delete()
+        .then((value) {
+      print('');
+    });
+  }
+
+
 }
 /*
 class SimilarProducts extends StatefulWidget {

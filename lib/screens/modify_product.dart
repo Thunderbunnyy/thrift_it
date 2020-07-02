@@ -9,12 +9,12 @@ import 'package:thriftit/components/product_tools.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:thriftit/screens/home.dart';
 
-class AddProduct extends StatefulWidget {
+class ModifyProduct extends StatefulWidget {
   @override
-  _AddProductState createState() => _AddProductState();
+  _ModifyProductState createState() => _ModifyProductState();
 }
 
-class _AddProductState extends State<AddProduct> {
+class _ModifyProductState extends State<ModifyProduct> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseUser loggedInUser;
@@ -65,7 +65,7 @@ class _AddProductState extends State<AddProduct> {
   void initState() {
 
     super.initState();
-
+    String id="20FhJpuLgBsVCbkM71M2";
     stateList = new List.from(localStates);
     sizeList = new List.from(localSizes);
     categoryList = new List.from(localCategories);
@@ -98,7 +98,7 @@ class _AddProductState extends State<AddProduct> {
                 color: Colors.red[300],
                 shape: new RoundedRectangleBorder(
                     borderRadius:
-                        new BorderRadius.all(new Radius.circular(15.0))),
+                    new BorderRadius.all(new Radius.circular(15.0))),
                 onPressed: () => pickImage(),
                 icon: Icon(
                   Icons.add,
@@ -173,7 +173,7 @@ class _AddProductState extends State<AddProduct> {
               height: 20.0,
             ),
             appButton(
-              btnTxt: "Sell !",
+              btnTxt: "Modify it !",
               onBtnclicked: addNewProducts,
               btnPadding: 20.0,
             )
@@ -208,7 +208,7 @@ class _AddProductState extends State<AddProduct> {
     try{
       for( int s=0; s<imageList.length; s++) {
         StorageReference storageReference = FirebaseStorage.instance
-          .ref()
+            .ref()
             .child("$s.jpg");
 
         storageReference.putFile(imageList[s]);
@@ -218,7 +218,7 @@ class _AddProductState extends State<AddProduct> {
 
       }
     } on PlatformException catch(e){
-        print(e.details);
+      print(e.details);
     }
 
     return imageUrl;
@@ -285,18 +285,19 @@ class _AddProductState extends State<AddProduct> {
       showSnackBar("Please select a size", scaffoldKey);
       return;
     }
-    
+
     try{
-      Firestore.instance.collection("Products").document().setData({
-      'productImage' : await uploadImages(),
-      'productName' : productNameController.text,
-      'productDesc' : productDescController.text,
-      'productPrice' : productPriceController.text,
+      Firestore.instance.collection("Products").document("20FhJpuLgBsVCbkM71M2").setData({
+        'productImage' : await uploadImages(),
+        'productName' : productNameController.text,
+        'productDesc' : productDescController.text,
+        'productPrice' : productPriceController.text,
         'productBrand' : productBrandController.text,
-      'productSize' : selectedSize,
-      'productState' : selectedState,
-      'productCategory': selectedCategory,
-      'user' : loggedInUser.uid
+        'productSize' : selectedSize,
+        'productState' : selectedState,
+        'productCategory': selectedCategory,
+        'user' : loggedInUser.uid
+
       });
 
       Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));

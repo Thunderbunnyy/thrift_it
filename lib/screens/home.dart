@@ -1,8 +1,10 @@
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:thriftit/components/products.dart';
-import 'package:thriftit/db/auth_util.dart';
+import 'package:thriftit/utils/auth_util.dart';
+import 'package:thriftit/screens/add_card.dart';
 import 'package:thriftit/screens/add_products.dart';
 import 'package:thriftit/screens/cart.dart';
 import 'package:thriftit/screens/login.dart';
@@ -14,6 +16,36 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseUser loggedInUser;
+
+  Future<DocumentSnapshot> getCurrentUserFromFS(FirebaseUser user) async {
+
+    final user = await _auth.currentUser();
+    loggedInUser = user;
+
+    try {
+      if (user != null) {
+        print("user id is ${user.uid}");
+        return Firestore.instance.collection('users').document(user.uid).get();
+
+      } else {
+        print("user is null");
+        return null;
+      }
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUserFromFS(loggedInUser);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,20 +103,23 @@ class _HomePageState extends State<HomePage> {
         child: new ListView(
           children: <Widget>[
 //            header
-            new UserAccountsDrawerHeader(
-              accountName: Text(""),
-              accountEmail: Text(""),
+            StreamBuilder(
+          stream: Firestore.instance.collection('Users').snapshots(),
+          builder: (BuildContext context, AsyncSnapshot snapshot){
+            return UserAccountsDrawerHeader(
+              accountName: Text("${loggedInUser?.displayName}"),
+              accountEmail: Text("${loggedInUser?.email}"),
               currentAccountPicture: GestureDetector(
                 child: new CircleAvatar(
+                  backgroundImage: NetworkImage("${loggedInUser?.photoUrl}"),
                   backgroundColor: Colors.grey,
-                  child: Icon(
-                    Icons.person,
-                    color: Colors.white,
-
-                  ),
+                  
                 ),
               ),
               decoration: new BoxDecoration(color: Colors.red[300]),
+            );
+          }
+             ,
             ),
 
 //            body
@@ -102,6 +137,15 @@ class _HomePageState extends State<HomePage> {
               child: ListTile(
                 title: Text('My account'),
                 leading: Icon(Icons.person, color: Colors.red[300]),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AddCard()));
+              },
+              child: ListTile(
+                title: Text('Add credit card info'),
+                leading: Icon(Icons.credit_card, color: Colors.red[300]),
               ),
             ),
 

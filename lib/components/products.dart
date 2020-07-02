@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,49 +9,7 @@ class Products extends StatefulWidget {
 }
 
 class _ProductsState extends State<Products> {
-  /*
-  var product_list = [
-    {
-      "name": "Blazer",
-      "sellerImage": "",
-      "seller": "Nour",
-      "picture": "assets/images/blazer1.jpeg",
-      "price": 120,
-      "size": "xs",
-    },
-    {
-      "name": "Dress",
-      "sellerImage": "",
-      "seller": "Nour",
-      "picture": "assets/images/dress1.jpeg",
-      "price": 100,
-      "size": "xs",
-    },
-    {
-      "name": "Heals",
-      "sellerImage": "",
-      "seller": "Nour",
-      "picture": "assets/images/hills1.jpeg",
-      "price": 80,
-      "size": "36",
-    },
-    {
-      "name": "Skirt",
-      "sellerImage": "",
-      "seller": "Nour",
-      "picture": "assets/images/skt1.jpeg",
-      "price": 60,
-      "size": "xs",
-    },
-    {
-      "name": "Dress",
-      "sellerImage": "",
-      "seller": "Nour",
-      "picture": "assets/images/dress2.jpeg",
-      "price": 150,
-      "size": "xs",
-    }
-  ];*/
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseUser loggedInUser;
 
@@ -90,7 +46,7 @@ class _ProductsState extends State<Products> {
         stream: Firestore.instance.collection('Products').snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: const Text('Loading events...'));
+            return Center(child: const Text('Loading products...'));
           }
           return GridView.builder(
               itemCount: snapshot.data.documents.length,

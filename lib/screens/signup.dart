@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thriftit/db/auth_util.dart';
+import 'package:thriftit/utils/auth_util.dart';
 
 class SignupPage extends StatefulWidget {
 

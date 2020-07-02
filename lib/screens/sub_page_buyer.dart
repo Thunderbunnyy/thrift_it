@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class SubPageBuyer extends StatefulWidget {
@@ -6,7 +7,7 @@ class SubPageBuyer extends StatefulWidget {
 }
 
 class _SubPageBuyerState extends State<SubPageBuyer> {
-
+/*
   var products_bought = [
     {
       "name": "Blazer",
@@ -21,20 +22,31 @@ class _SubPageBuyerState extends State<SubPageBuyer> {
       "size": "xs",
     },
 
-  ];
+  ];*/
+
+  @override
+  void initState() {
+    super.initState();
+
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: products_bought.length,
-        itemBuilder: (context,index){
-          return SingleCartProduct(
-            cart_prod_name: products_bought[index]["name"],
-            cart_prod_picture: products_bought[index]['picture'],
-            cart_prod_price: products_bought[index]['price'],
-            cart_prod_size: products_bought[index]['size'],
-          );
+    return StreamBuilder(
+      stream: Firestore.instance.collection('Purchases').snapshots(),
+        builder: (BuildContext context, AsyncSnapshot snapshot){
+        return ListView.builder(
+            itemCount: snapshot.data.documents.length,
+            itemBuilder: (context,index){
+              return SingleCartProduct(
+                cart_prod_name: snapshot.data.documents[index]['productName'],
+                cart_prod_picture: snapshot.data.documents[index]['producImage'],
+                cart_prod_price: snapshot.data.documents[index]['productPrice'],
+              );
+            }
+        );
         }
+
     );
   }
 }
@@ -54,15 +66,12 @@ class SingleCartProduct extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: Image.asset(cart_prod_picture,width: 100,height: 100),
-        title: Text(cart_prod_name),
+        leading: Image.network(cart_prod_picture,width: 100,height: 100),
+        title: Text('${cart_prod_name}'),
         subtitle: Column(
           children: <Widget>[
             Row(
               children: <Widget>[
-                Expanded(
-                  child: Text(cart_prod_size),
-                ),
                 Expanded(
                   child: Text("$cart_prod_price DT",style: TextStyle(color: Colors.red),),
                 ),
